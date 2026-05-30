@@ -9,8 +9,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 NIM_API_KEY = os.getenv("GROQ_API_KEY")
-# 🌟 這裡換成你剛剛申請的 Groq 鑰匙！
-NIM_API_KEY = "GROQ_API_KEY" 
 NEWS_TRACKING_FILE = 'tracked_news.json'
 MAX_TRACKED_NEWS = 500
 
@@ -37,7 +35,7 @@ def get_cnyes_news():
             data = response.json()
             return data['items']['data']
         except Exception as e:
-            print(f"⚠️ 鉅亨網連線異常，3秒後進行第 {attempt + 2} 次重試... ({e})")
+            print(f"⚠️ 鉅亨網連線異常，3秒後進行第 {attempt + 2} 次重試... ({e})", flush=True)
             time.sleep(3)
     return []
 
@@ -70,17 +68,16 @@ def get_jinshi_news():
                     })
             return items
         except Exception as e:
-            print(f"⚠️ 金十數據連線異常，3秒後重試... ({e})")
+            print(f"⚠️ 金十數據連線異常，3秒後重試... ({e})", flush=True)
             time.sleep(3)
     return []
 
 def analyze_news(news_item):
-    if not NIM_API_KEY or NIM_API_KEY.startswith("gsk_請在這裡"):
-        print("🚨 錯誤：你忘記把鑰匙換成 Groq 金鑰了！")
+    if not NIM_API_KEY:
+        print("🚨 錯誤：雲端環境變數中找不到 GROQ_API_KEY！", flush=True)
         return None
     
-    print(f"準備分析: {news_item['title'][:30]}...")
-    # 🌟 已經幫你把伺服器通道換成 Groq 專屬通道
+    print(f"準備分析: {news_item['title'][:30]}...", flush=True)
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {NIM_API_KEY}",
@@ -111,21 +108,20 @@ def analyze_news(news_item):
 新聞摘要：{news_item['summary']}"""
 
     payload = {
-        "model": "llama-3.3-70b-versatile", # 🌟 已經幫你換成 Groq 上的模型代號
+        "model": "llama-3.3-70b-versatile",
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.2
     }
     
     for attempt in range(3):
         try:
-            # 🌟 Groq 快到根本用不到 15 秒，但我們一樣保留 60 秒的寬限與重試機制
             response = requests.post(url, headers=headers, json=payload, verify=False, timeout=60)
             if response.status_code != 200:
-                print(f"🚨 AI 伺服器拒絕連線！詳細原因: {response.text}")
+                print(f"🚨 AI 伺服器拒絕連線！詳細原因: {response.text}", flush=True)
                 return None
             return response.json()['choices'][0]['message']['content']
         except Exception as e:
-            print(f"⚠️ AI 思考超時或異常，正在重新呼叫 (第 {attempt + 2} 次重試)... ({e})")
+            print(f"⚠️ AI 思考超時或異常，正在重新呼叫 (第 {attempt + 2} 次重試)... ({e})", flush=True)
             time.sleep(3)
     return None
 
@@ -171,12 +167,11 @@ def send_discord_alert(news_item, analysis):
             requests.post(DISCORD_WEBHOOK_URL, json=payload, verify=False, timeout=10)
             break 
         except Exception as e:
-            print(f"⚠️ Discord 推播異常，3秒後重試... ({e})")
+            print(f"⚠️ Discord 推播異常，3秒後重試... ({e})", flush=True)
             time.sleep(3)
 
-# 從 if __name__ == "__main__": 開始，往下全部替換！
 if __name__ == "__main__":
-    print("🚀 雲端排程自動化版：神獸開始巡邏！", flush=True)  # 加了 flush=True 破解隱形斗篷！
+    print("🚀 雲端排程自動化版：神獸開始巡邏！", flush=True)
     tracked_news = load_tracked_news()
     
     cnyes_items = get_cnyes_news()
