@@ -174,16 +174,16 @@ def send_discord_alert(news_item, analysis):
             print(f"⚠️ Discord 推播異常，3秒後重試... ({e})")
             time.sleep(3)
 
+# 從 if __name__ == "__main__": 開始，往下全部替換！
 if __name__ == "__main__":
-if __name__ == "__main__":
-    print("🚀 雲端排程自動化版：神獸開始巡邏！")
+    print("🚀 雲端排程自動化版：神獸開始巡邏！", flush=True)  # 加了 flush=True 破解隱形斗篷！
     tracked_news = load_tracked_news()
     
     cnyes_items = get_cnyes_news()
     jinshi_items = get_jinshi_news()
     all_news = cnyes_items + jinshi_items
     
-    print(f"共掃描到 {len(cnyes_items)} 則鉅亨頭條, {len(jinshi_items)} 則金十快訊")
+    print(f"共掃描到 {len(cnyes_items)} 則鉅亨頭條, {len(jinshi_items)} 則金十快訊", flush=True)
     
     new_count = 0
     for item in all_news:
@@ -198,6 +198,6 @@ if __name__ == "__main__":
                 
     if new_count > 0:
         save_tracked_news(tracked_news)
-        print(f"✨ 檢查完畢，共更新並發送了 {new_count} 則新快訊！")
+        print(f"✨ 檢查完畢，共更新並發送了 {new_count} 則新快訊！", flush=True)
     else:
-        print("😴 沒有發現全新新聞，收工休息！")
+        print("😴 沒有發現全新新聞，收工休息！", flush=True)
