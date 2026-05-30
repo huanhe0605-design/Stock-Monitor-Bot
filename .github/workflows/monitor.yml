@@ -29,7 +29,7 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python cnyes_discord_monitor.py
+        run: python -u cnyes_discord_monitor.py
 
       - name: 5. 自動保存已讀新聞記憶
         run: |
