@@ -170,29 +170,39 @@ def send_discord_alert(news_item, analysis):
             print(f"⚠️ Discord 推播異常，3秒後重試... ({e})", flush=True)
             time.sleep(3)
 
+# 從 if __name__ == "__main__": 開始，往下全部替換！
 if __name__ == "__main__":
-    print("🚀 雲端排程自動化版：神獸開始巡邏！", flush=True)
+    print("【雷達 1】進入主程式，準備載入記憶...", flush=True)
     tracked_news = load_tracked_news()
+    print("【雷達 2】記憶載入完成！", flush=True)
     
+    print("【雷達 3】準備連接鉅亨網...", flush=True)
     cnyes_items = get_cnyes_news()
-    jinshi_items = get_jinshi_news()
-    all_news = cnyes_items + jinshi_items
+    print("【雷達 4】鉅亨網抓取完成！", flush=True)
     
-    print(f"共掃描到 {len(cnyes_items)} 則鉅亨頭條, {len(jinshi_items)} 則金十快訊", flush=True)
+    print("【雷達 5】準備連接金十數據...", flush=True)
+    jinshi_items = get_jinshi_news()
+    print("【雷達 6】金十數據抓取完成！", flush=True)
+    
+    all_news = cnyes_items + jinshi_items
+    print(f"【雷達 7】共掃描到 {len(all_news)} 則新聞，準備分析...", flush=True)
     
     new_count = 0
     for item in all_news:
         news_id = item['newsId']
         if news_id not in tracked_news:
+            print(f"【雷達 8】發現新新聞，交給 AI 分析: {item['title'][:20]}...", flush=True)
             analysis = analyze_news(item)
             if analysis:
+                print(f"【雷達 9】AI 分析完成，準備推播 Discord...", flush=True)
                 send_discord_alert(item, analysis)
                 tracked_news.append(news_id)
                 new_count += 1
                 time.sleep(2) 
+                print(f"【雷達 10】Discord 推播成功！", flush=True)
                 
     if new_count > 0:
-    save_tracked_news(tracked_news)
-    print(f"✨ 檢查完畢，共更新並發送了 {new_count} 則新快訊！", flush=True)
-else:
-    print("😴 沒有發現全新新聞，收工休息！", flush=True)
+        save_tracked_news(tracked_news)
+        print(f"✨ 檢查完畢，共發送了 {new_count} 則！", flush=True)
+    else:
+        print("😴 沒有全新新聞，收工！", flush=True)
