@@ -175,24 +175,29 @@ def send_discord_alert(news_item, analysis):
             time.sleep(3)
 
 if __name__ == "__main__":
-    print("🚀 雲端先鋒版：已搭載 Groq 超跑引擎的神獸啟動！")
-    while True:
-        tracked_news = load_tracked_news()
-        
-        cnyes_items = get_cnyes_news()
-        jinshi_items = get_jinshi_news()
-        all_news = cnyes_items + jinshi_items
-        
-        print(f"共掃描到 {len(cnyes_items)} 則鉅亨頭條, {len(jinshi_items)} 則金十快訊")
-        
-        for item in all_news:
-            news_id = item['newsId']
-            if news_id not in tracked_news:
-                analysis = analyze_news(item)
-                if analysis:
-                    send_discord_alert(item, analysis)
-                    tracked_news.append(news_id)
-                    save_tracked_news(tracked_news)
-                    time.sleep(2) 
-                    
-        time.sleep(1800)
+if __name__ == "__main__":
+    print("🚀 雲端排程自動化版：神獸開始巡邏！")
+    tracked_news = load_tracked_news()
+    
+    cnyes_items = get_cnyes_news()
+    jinshi_items = get_jinshi_news()
+    all_news = cnyes_items + jinshi_items
+    
+    print(f"共掃描到 {len(cnyes_items)} 則鉅亨頭條, {len(jinshi_items)} 則金十快訊")
+    
+    new_count = 0
+    for item in all_news:
+        news_id = item['newsId']
+        if news_id not in tracked_news:
+            analysis = analyze_news(item)
+            if analysis:
+                send_discord_alert(item, analysis)
+                tracked_news.append(news_id)
+                new_count += 1
+                time.sleep(2) 
+                
+    if new_count > 0:
+        save_tracked_news(tracked_news)
+        print(f"✨ 檢查完畢，共更新並發送了 {new_count} 則新快訊！")
+    else:
+        print("😴 沒有發現全新新聞，收工休息！")
