@@ -192,7 +192,7 @@ if __name__ == "__main__":
                 time.sleep(2) 
                 
     if new_count > 0:
-        save_tracked_news(tracked_news)
-        print(f"✨ 檢查完畢，共更新並發送了 {new_count} 則新快訊！", flush=True)
-    else:
-        print("😴 沒有發現全新新聞，收工休息！", flush=True)
+    save_tracked_news(tracked_news)
+    print(f"✨ 檢查完畢，共更新並發送了 {new_count} 則新快訊！", flush=True)
+else:
+    print("😴 沒有發現全新新聞，收工休息！", flush=True)
