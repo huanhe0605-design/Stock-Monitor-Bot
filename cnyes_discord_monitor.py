@@ -170,7 +170,6 @@ def send_discord_alert(news_item, analysis):
             print(f"⚠️ Discord 推播異常，3秒後重試... ({e})", flush=True)
             time.sleep(3)
 
-# 從 if __name__ == "__main__": 開始，往下全部替換！
 if __name__ == "__main__":
     print("【雷達 1】進入主程式，準備載入記憶...", flush=True)
     tracked_news = load_tracked_news()
